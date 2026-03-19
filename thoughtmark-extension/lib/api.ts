@@ -4,11 +4,45 @@
  * 携带认证 Header 调用 thoughtmark-web REST API。
  * 所有插件端的网络请求都通过这个客户端发出。
  *
- * TODO(Story-2.1): 从 Cookie/Storage 获取 auth token 并附加到 Header
+ * Story 3.1: 添加 Authorization header（从 Chrome Storage 读取 token）
  * TODO(Story-3.3): 离线时拦截请求，写入本地队列
  */
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+
+/**
+ * 从 Chrome Storage 获取保存的 auth token
+ */
+async function getAuthToken(): Promise<string | null> {
+  try {
+    const result = await browser.storage.local.get('authToken') as Record<string, string | undefined>;
+    return result.authToken || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 保存 auth token 到 Chrome Storage
+ */
+export async function saveAuthToken(token: string): Promise<void> {
+  await browser.storage.local.set({ authToken: token });
+}
+
+/**
+ * 清除 auth token
+ */
+export async function clearAuthToken(): Promise<void> {
+  await browser.storage.local.remove('authToken');
+}
+
+/**
+ * 检查是否已登录（token 是否存在）
+ */
+export async function isAuthenticated(): Promise<boolean> {
+  const token = await getAuthToken();
+  return !!token;
+}
 
 /**
  * 统一的 API 请求方法
@@ -21,12 +55,13 @@ export async function apiFetch(
   options?: RequestInit
 ): Promise<Response> {
   const url = `${API_BASE}${path}`;
+  const token = await getAuthToken();
 
   return fetch(url, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      // TODO(Story-2.1): 添加 Authorization header
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...options?.headers,
     },
   });

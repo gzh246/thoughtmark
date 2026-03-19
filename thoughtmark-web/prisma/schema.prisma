@@ -12,13 +12,32 @@ datasource db {
 }
 
 // Story 1.1: 初始 User model
-// Story 2.1: 添加 passwordHash（nullable: OAuth 用户无密码）
+// Story 2.1: 添加 passwordHash
+// Story 3.1: 添加 bookmarks 关系
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   name         String?
-  passwordHash String?  @map("password_hash")
-  createdAt    DateTime @default(now()) @map("created_at")
+  passwordHash String?    @map("password_hash")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  bookmarks    Bookmark[]
 
   @@map("users")
+}
+
+// Story 3.1: 书签核心 model
+// whySaved 是产品核心字段 — "为什么收藏这个"
+model Bookmark {
+  id        String   @id @default(cuid())
+  url       String
+  title     String
+  whySaved  String?  @map("why_saved")
+  quickTags String[] @map("quick_tags")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("bookmarks")
 }
