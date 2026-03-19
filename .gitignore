@@ -1,0 +1,31 @@
+# ===== 系统文件 =====
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.sublime-*
+
+# ===== Node =====
+node_modules/
+
+# ===== 环境变量 =====
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ===== 构建产物 =====
+.next/
+.output/
+dist/
+out/
+
+# ===== BMAD 配置（不排除，保留在仓库中）=====
+# _bmad/ 和 _bmad-output/ 是项目规划的一部分，应该被追踪
+
+# ===== Antigravity 会话缓存（不提交） =====
+.gemini/

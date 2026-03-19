@@ -1,0 +1,23 @@
+// prisma/schema.prisma
+// Thoughtmark 数据模型 — Prisma 是数据库唯一真相来源
+// 所有 schema 变更必须通过 prisma migrate，禁止手动改数据库
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Story 1.1: 初始 User model
+// 后续 Story 2.1+ 会扩展 password_hash、accounts 等字段
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}

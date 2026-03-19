@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thoughtmark · UX 设计方向</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-900: #0f0f1a;
+  --primary-800: #1a1a2e;
+  --primary-700: #16213e;
+  --accent-400: #f5a623;
+  --accent-100: #fdf0d5;
+  --text-primary: #f0f0f0;
+  --text-secondary: #9090a0;
+  --surface: #242436;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--primary-900);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15,15,26,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  padding: 16px 32px;
+  display: flex; align-items: center; gap: 24px;
+}
+.nav-title { font-size: 14px; font-weight: 600; color: var(--accent-400); }
+.direction-btn {
+  padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12);
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer;
+  transition: all 0.2s;
+}
+.direction-btn.active {
+  background: var(--accent-400); color: #000;
+  border-color: var(--accent-400); font-weight: 600;
+}
+.direction-btn:hover:not(.active) {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-primary);
+}
+
+/* DIRECTION PANELS */
+.direction { display: none; padding: 40px 32px; max-width: 1200px; margin: 0 auto; }
+.direction.active { display: block; }
+
+.direction-header { margin-bottom: 40px; }
+.direction-label {
+  display: inline-block;
+  background: var(--accent-400);
+  color: #000; font-size: 11px; font-weight: 700;
+  padding: 4px 12px; border-radius: 12px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.direction-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.direction-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 600px; }
+
+.mockup-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+
+/* PLUGIN POPUP MOCKUP */
+.popup-frame {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 20px;
+}
+.popup-frame-label {
+  font-size: 11px; font-weight: 600; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
+}
+
+/* Direction A: Minimal Dark */
+.popup-a {
+  width: 320px; background: rgba(26,26,46,0.96);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.popup-a-header {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 8px;
+}
+.popup-logo { width: 20px; height: 20px; background: var(--accent-400); border-radius: 6px; }
+.popup-site {
+  font-size: 11px; color: var(--text-secondary);
+  flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.popup-page-title {
+  padding: 12px 16px 6px;
+  font-size: 12px; color: var(--text-secondary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.popup-annotation {
+  margin: 0 16px 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 12px;
+  min-height: 72px;
+}
+.popup-annotation-text {
+  font-size: 13px; color: rgba(240,240,240,0.3); line-height: 1.5;
+}
+.popup-tags { padding: 0 16px 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px; color: var(--text-secondary); cursor: pointer;
+  transition: all 0.15s;
+}
+.tag.selected { background: rgba(245,166,35,0.15); border-color: var(--accent-400); color: var(--accent-400); }
+.popup-actions { padding: 12px 16px; display: flex; gap: 8px; }
+.btn-primary {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: var(--accent-400); color: #000;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer;
+}
+.btn-ghost {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: rgba(255,255,255,0.05); color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+}
+
+/* TIMELINE MOCKUP */
+.timeline-a {
+  background: var(--primary-800);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.tl-sidebar {
+  width: 200px; background: var(--primary-900);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  float: left; height: 420px; padding: 16px 12px;
+}
+.tl-sidebar-item {
+  padding: 8px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;
+  color: var(--text-secondary); margin-bottom: 2px; transition: all 0.15s;
+}
+.tl-sidebar-item.active {
+  background: rgba(245,166,35,0.12); color: var(--accent-400);
+}
+.tl-main { margin-left: 200px; padding: 20px; height: 420px; overflow-y: auto; }
+.tl-date-label {
+  font-size: 11px; font-weight: 600; color: var(--text-secondary);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.tl-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px; padding: 14px; margin-bottom: 12px;
+  transition: all 0.2s;
+}
+.tl-card:hover { border-color: rgba(245,166,35,0.3); transform: translateY(-1px); }
+.tl-card-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.tl-card-annotation {
+  font-size: 12px; color: var(--accent-400);
+  background: rgba(245,166,35,0.08);
+  border-radius: 6px; padding: 6px 8px; margin-bottom: 8px;
+}
+.tl-card-meta { font-size: 11px; color: var(--text-secondary); display: flex; gap: 12px; }
+.tl-card-tag {
+  padding: 2px 8px; border-radius: 10px;
+  background: rgba(255,255,255,0.05); font-size: 10px;
+  color: var(--text-secondary);
+}
+
+/* Direction B: Warm Light */
+.direction-b-bg {
+  background: #f8f4ee;
+  border-radius: 16px; padding: 20px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+.popup-b {
+  width: 320px; background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+.popup-b-header {
+  padding: 14px 16px;
+  background: #f9f6f0;
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  display: flex; align-items: center; gap: 8px;
+}
+.popup-b-logo { width: 20px; height: 20px; background: #d4822a; border-radius: 6px; }
+.popup-b-site { font-size: 11px; color: #888; flex: 1; }
+.popup-b-annotation {
+  margin: 12px 16px;
+  background: var(--accent-100);
+  border: 1.5px solid #f0c070;
+  border-radius: 12px; padding: 12px;
+  min-height: 72px;
+}
+.popup-b-annotation-text { font-size: 13px; color: #b8a080; line-height: 1.5; }
+.popup-b-tags { padding: 0 16px 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-b {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1.5px solid #e8d5b0;
+  font-size: 11px; color: #a08060; cursor: pointer;
+}
+.tag-b.selected { background: #d4822a; border-color: #d4822a; color: white; }
+.popup-b-actions { padding: 12px 16px; display: flex; gap: 8px; }
+.btn-primary-b {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: #d4822a; color: white;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer;
+}
+.btn-ghost-b {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: transparent; color: #a08060;
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  border: 1.5px solid #e8d5b0; cursor: pointer;
+}
+
+.timeline-b {
+  background: #ffffff; border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+}
+.tl-b-header {
+  padding: 16px 20px; background: #f9f6f0;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.tl-b-title { font-size: 15px; font-weight: 600; color: #2c2c2c; }
+.tl-b-main { padding: 16px 20px; height: 380px; overflow-y: auto; }
+.tl-b-date { font-size: 11px; font-weight: 600; color: #a08060; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; margin-top: 16px; }
+.tl-b-card {
+  background: #f9f6f0; border-radius: 12px;
+  padding: 14px; margin-bottom: 10px; cursor: pointer;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.tl-b-card:hover { border-color: #d4822a; }
+.tl-b-title-text { font-size: 13px; font-weight: 500; color: #2c2c2c; margin-bottom: 6px; }
+.tl-b-annotation { font-size: 12px; color: #d4822a; margin-bottom: 6px; font-style: italic; }
+.tl-b-meta { font-size: 11px; color: #a08060; }
+
+/* Direction C: Glassmorphism Focus */
+.direction-c-bg {
+  background: linear-gradient(135deg, #0d1547 0%, #1a0a3d 50%, #0d1547 100%);
+  border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.direction-c-bg::before {
+  content: ''; position: absolute;
+  top: -100px; left: -100px; right: -100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(100,150,255,0.15) 0%, transparent 70%);
+}
+.popup-c {
+  width: 320px; background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative;
+}
+.popup-c-header {
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 8px;
+}
+.popup-c-logo {
+  width: 20px; height: 20px;
+  background: linear-gradient(135deg, #6490ff, #a070ff);
+  border-radius: 6px;
+}
+.popup-c-site { font-size: 11px; color: rgba(255,255,255,0.4); flex: 1; }
+.popup-c-annotation {
+  margin: 12px 16px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px; padding: 12px; min-height: 72px;
+}
+.popup-c-annotation-text { font-size: 13px; color: rgba(255,255,255,0.25); line-height: 1.5; }
+.popup-c-tags { padding: 0 16px 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-c {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px; color: rgba(255,255,255,0.4); cursor: pointer;
+}
+.tag-c.selected {
+  background: linear-gradient(135deg, rgba(100,144,255,0.3), rgba(160,112,255,0.3));
+  border-color: rgba(100,144,255,0.6); color: #a0c0ff;
+}
+.popup-c-actions { padding: 12px 16px; display: flex; gap: 8px; }
+.btn-primary-c {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: linear-gradient(135deg, #6490ff, #a070ff);
+  color: white;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(100,144,255,0.3);
+}
+.btn-ghost-c {
+  flex: 1; padding: 10px; border-radius: 10px;
+  background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4);
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  border: 1px solid rgba(255,255,255,0.08); cursor: pointer;
+}
+
+.timeline-c {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.tl-c-header {
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.tl-c-title { font-size: 15px; font-weight: 600; }
+.tl-c-main { padding: 16px 20px; height: 380px; overflow-y: auto; }
+.tl-c-date { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; margin-top: 16px; }
+.tl-c-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px; padding: 14px; margin-bottom: 10px; cursor: pointer;
+  transition: all 0.2s;
+}
+.tl-c-card:hover {
+  background: rgba(100,144,255,0.08);
+  border-color: rgba(100,144,255,0.3);
+}
+.tl-c-card-title { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.tl-c-annotation { font-size: 12px; color: #8ab0ff; margin-bottom: 6px; }
+.tl-c-meta { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+/* CHOICE SECTION */
+.choice-section {
+  margin-top: 40px; padding: 28px; background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+}
+.choice-title { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
+.choice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.choice-card {
+  padding: 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.08);
+  cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.02);
+}
+.choice-card:hover { border-color: var(--accent-400); background: rgba(245,166,35,0.05); }
+.choice-card-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.choice-card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+.choice-card-dot { width: 10px; height: 10px; border-radius: 50%; margin-bottom: 10px; }
+
+.clearfix::after { content: ''; display: table; clear: both; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <span class="nav-title">Thoughtmark · UX 设计方向探索</span>
+  <button class="direction-btn active" onclick="showDirection('a')">方向 A · 极简深色</button>
+  <button class="direction-btn" onclick="showDirection('b')">方向 B · 温暖浅色</button>
+  <button class="direction-btn" onclick="showDirection('c')">方向 C · 玻璃渐变</button>
+</div>
+
+<!-- ===== DIRECTION A: Minimal Dark ===== -->
+<div class="direction active" id="dir-a">
+  <div class="direction-header">
+    <div class="direction-label">方向 A</div>
+    <div class="direction-title">极简深色 · Focused Dark</div>
+    <div class="direction-desc">深蓝黑主色 + 橙黄强调色。专注感强，Night Owl 用户友好。视觉层次清晰，把"注解"置于最显眼的位置。类似 Linear、Raycast 的专业工具审美。</div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="popup-frame">
+      <div class="popup-frame-label">📌 插件 Popup</div>
+      <div class="popup-a">
+        <div class="popup-a-header">
+          <div class="popup-logo"></div>
+          <span class="popup-site">nngroup.com</span>
+        </div>
+        <div class="popup-page-title">10 Usability Heuristics for User Interface Design</div>
+        <div class="popup-annotation">
+          <div class="popup-annotation-text">为什么要看这个？</div>
+        </div>
+        <div class="popup-tags">
+          <div class="tag selected">学习资料</div>
+          <div class="tag">工作参考</div>
+          <div class="tag">灵感收藏</div>
+        </div>
+        <div class="popup-actions">
+          <button class="btn-primary">保存</button>
+          <button class="btn-ghost">跳过</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-frame">
+      <div class="popup-frame-label">🕐 时间轴 · Web App</div>
+      <div class="timeline-a clearfix">
+        <div class="tl-sidebar">
+          <div class="tl-sidebar-item active">⏳ 时间轴</div>
+          <div class="tl-sidebar-item">🧠 AI 聚类</div>
+          <div class="tl-sidebar-item">🔍 搜索</div>
+          <div class="tl-sidebar-item">⚙️ 设置</div>
+        </div>
+        <div class="tl-main">
+          <div class="tl-date-label">今天</div>
+          <div class="tl-card">
+            <div class="tl-card-title">10 Usability Heuristics for User Interface Design</div>
+            <div class="tl-card-annotation">📝 Nielsen 的 10 条启发式原则，要结合到下周的 Design Review</div>
+            <div class="tl-card-meta">
+              <span>3 小时前</span>
+              <div class="tl-card-tag">学习资料</div>
+            </div>
+          </div>
+          <div class="tl-card">
+            <div class="tl-card-title">WXT Framework - Browser Extension Framework</div>
+            <div class="tl-card-annotation">📝 Thoughtmark 用这个，要深度研究 Popup API</div>
+            <div class="tl-card-meta">
+              <span>6 小时前</span>
+              <div class="tl-card-tag">工作参考</div>
+            </div>
+          </div>
+          <div class="tl-date-label">昨天</div>
+          <div class="tl-card">
+            <div class="tl-card-title">How Readwise builds user habits</div>
+            <div class="tl-card-meta"><span>1 天前</span><div class="tl-card-tag">灵感</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-section">
+    <div class="choice-title">适合这类用户</div>
+    <p style="font-size:13px; color: var(--text-secondary); line-height:1.6;">深色模式用户、独立开发者（James 画像）、夜间工作习惯者。专业感强，强调"工具感"而非"消费感"。与 Linear / Raycast 同类审美。</p>
+  </div>
+</div>
+
+<!-- ===== DIRECTION B: Warm Light ===== -->
+<div class="direction" id="dir-b">
+  <div class="direction-header">
+    <div class="direction-label">方向 B</div>
+    <div class="direction-title">温暖浅色 · Warm Knowledge</div>
+    <div class="direction-desc">米白 + 暖橙色调。如同翻阅纸质笔记本，知识积累的温度感。适合白天使用，读书感强，把"思考"而不是"效率"置于中心。类似 Things 3、Obsidian 浅色模式审美。</div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="popup-frame" style="background: rgba(244,230,210,0.15);">
+      <div class="popup-frame-label">📌 插件 Popup</div>
+      <div class="direction-b-bg" style="padding:16px;">
+        <div class="popup-b">
+          <div class="popup-b-header">
+            <div class="popup-b-logo"></div>
+            <span class="popup-b-site" style="color:#888;">nngroup.com</span>
+          </div>
+          <div style="padding: 10px 16px 4px; font-size: 12px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">10 Usability Heuristics for User Interface Design</div>
+          <div class="popup-b-annotation">
+            <div class="popup-b-annotation-text">为什么要看这个？</div>
+          </div>
+          <div class="popup-b-tags">
+            <div class="tag-b selected">学习资料</div>
+            <div class="tag-b">工作参考</div>
+            <div class="tag-b">灵感收藏</div>
+          </div>
+          <div class="popup-b-actions">
+            <button class="btn-primary-b">保存</button>
+            <button class="btn-ghost-b">跳过</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-frame" style="background: rgba(244,230,210,0.15);">
+      <div class="popup-frame-label">🕐 时间轴 · Web App</div>
+      <div class="timeline-b">
+        <div class="tl-b-header">
+          <div class="tl-b-title" style="color:#2c2c2c;">我的时间轴</div>
+          <span style="font-size:12px; color:#a08060;">47 条书签</span>
+        </div>
+        <div class="tl-b-main">
+          <div class="tl-b-date">今天</div>
+          <div class="tl-b-card">
+            <div class="tl-b-title-text">10 Usability Heuristics for User Interface Design</div>
+            <div class="tl-b-annotation">"Nielsen 的 10 条原则，设计 Review 要用"</div>
+            <div class="tl-b-meta">3 小时前 · 学习资料</div>
+          </div>
+          <div class="tl-b-card">
+            <div class="tl-b-title-text">WXT Framework - Browser Extension Framework</div>
+            <div class="tl-b-annotation">"Thoughtmark 用这个，深度研究 Popup API"</div>
+            <div class="tl-b-meta">6 小时前 · 工作参考</div>
+          </div>
+          <div class="tl-b-date">昨天</div>
+          <div class="tl-b-card">
+            <div class="tl-b-title-text">How Readwise builds user habits</div>
+            <div class="tl-b-meta">1 天前 · 灵感</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-section">
+    <div class="choice-title">适合这类用户</div>
+    <p style="font-size:13px; color: var(--text-secondary); line-height:1.6;">白天主要使用的用户、注重阅读体验的知识工作者（Sara 画像）、偏好纸质笔记本感的人。"知识积累"的仪式感强，把阅读和思考置于中心。</p>
+  </div>
+</div>
+
+<!-- ===== DIRECTION C: Glass Gradient ===== -->
+<div class="direction" id="dir-c">
+  <div class="direction-header">
+    <div class="direction-label">方向 C</div>
+    <div class="direction-title">玻璃渐变 · Glass Gradient</div>
+    <div class="direction-desc">深紫蓝渐变背景 + 蓝紫强调色 + 玻璃态组件。现代感最强，"AI 驱动工具"的科技感突出。适合 AI 功能作为核心卖点的品牌定位。类似 Notion AI、Linear 2024 审美。</div>
+  </div>
+
+  <div class="mockup-grid">
+    <div class="popup-frame" style="background: rgba(30,30,80,0.5);">
+      <div class="popup-frame-label">📌 插件 Popup</div>
+      <div class="direction-c-bg" style="padding:16px;">
+        <div class="popup-c">
+          <div class="popup-c-header">
+            <div class="popup-c-logo"></div>
+            <span class="popup-c-site">nngroup.com</span>
+          </div>
+          <div style="padding: 10px 16px 4px; font-size: 12px; color: rgba(255,255,255,0.3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">10 Usability Heuristics for User Interface Design</div>
+          <div class="popup-c-annotation">
+            <div class="popup-c-annotation-text">为什么要看这个？</div>
+          </div>
+          <div class="popup-c-tags">
+            <div class="tag-c selected">学习资料</div>
+            <div class="tag-c">工作参考</div>
+            <div class="tag-c">灵感收藏</div>
+          </div>
+          <div class="popup-c-actions">
+            <button class="btn-primary-c">保存</button>
+            <button class="btn-ghost-c">跳过</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="popup-frame" style="background: rgba(30,30,80,0.5);">
+      <div class="popup-frame-label">🕐 时间轴 · Web App</div>
+      <div class="direction-c-bg" style="padding:16px;">
+        <div class="timeline-c">
+          <div class="tl-c-header">
+            <div class="tl-c-title">我的时间轴</div>
+          </div>
+          <div class="tl-c-main">
+            <div class="tl-c-date">今天</div>
+            <div class="tl-c-card">
+              <div class="tl-c-card-title">10 Usability Heuristics for User Interface Design</div>
+              <div class="tl-c-annotation">✦ Nielsen 的 10 条原则，设计 Review 要用</div>
+              <div class="tl-c-meta">3 小时前 · 学习资料</div>
+            </div>
+            <div class="tl-c-card">
+              <div class="tl-c-card-title">WXT Framework - Browser Extension Framework</div>
+              <div class="tl-c-annotation">✦ Thoughtmark 用这个，深度研究 Popup API</div>
+              <div class="tl-c-meta">6 小时前 · 工作参考</div>
+            </div>
+            <div class="tl-c-date">昨天</div>
+            <div class="tl-c-card">
+              <div class="tl-c-card-title">How Readwise builds user habits</div>
+              <div class="tl-c-meta">1 天前 · 灵感</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-section">
+    <div class="choice-title">适合这类用户</div>
+    <p style="font-size:13px; color: var(--text-secondary); line-height:1.6;">对 AI 功能最感兴趣的用户，科技产品重度用户，习惯深色+渐变审美的年轻用户。"AI 驱动"品牌传达最强，AI 聚类视图在这个方向下视觉冲击力最大。</p>
+  </div>
+</div>
+
+<script>
+function showDirection(dir) {
+  document.querySelectorAll('.direction').forEach(d => d.classList.remove('active'));
+  document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('dir-' + dir).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
