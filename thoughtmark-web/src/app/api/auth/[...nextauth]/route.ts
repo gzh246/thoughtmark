@@ -1,7 +1,11 @@
 /**
- * NextAuth v5 API Route Handler
+ * NextAuth v4 API Route Handler
  *
- * 从 lib/auth.ts 导入 handlers，暴露 GET 和 POST。
- * 所有认证相关配置集中在 lib/auth.ts 中管理。
+ * v4 用法：NextAuth(authOptions) 返回 handler 函数
  */
-export { handlers as GET, handlers as POST } from "@/lib/auth"
+import NextAuth from "next-auth"
+import { authOptions } from "@/lib/auth"
+
+const handler = NextAuth(authOptions)
+
+export { handler as GET, handler as POST }

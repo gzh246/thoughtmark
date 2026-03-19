@@ -12,12 +12,13 @@ datasource db {
 }
 
 // Story 1.1: 初始 User model
-// 后续 Story 2.1+ 会扩展 password_hash、accounts 等字段
+// Story 2.1: 添加 passwordHash（nullable: OAuth 用户无密码）
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now()) @map("created_at")
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String?  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("users")
 }
