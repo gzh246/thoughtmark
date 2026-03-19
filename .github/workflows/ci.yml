@@ -1,0 +1,63 @@
+# Thoughtmark CI Pipeline
+# 在 PR 和 push 到 main 时运行类型检查和 lint
+
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  # ─────────────────────────────────────
+  # thoughtmark-web: Next.js 类型检查 + Lint
+  # ─────────────────────────────────────
+  web:
+    name: Web — TypeScript & Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: thoughtmark-web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: thoughtmark-web/package-lock.json
+
+      - run: npm ci
+
+      - name: Prisma Generate
+        run: npx prisma generate
+
+      - name: TypeScript Check
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npm run lint
+
+  # ─────────────────────────────────────
+  # thoughtmark-extension: WXT 类型检查
+  # ─────────────────────────────────────
+  extension:
+    name: Extension — TypeScript
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: thoughtmark-extension
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: thoughtmark-extension/package-lock.json
+
+      - run: npm ci
+
+      - name: TypeScript Check
+        run: npx tsc --noEmit
