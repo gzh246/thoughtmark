@@ -15,15 +15,18 @@ datasource db {
 // Story 2.1: 添加 passwordHash
 // Story 2.2: 添加 accounts/sessions 关系（NextAuth OAuth）
 // Story 3.1: 添加 bookmarks 关系
+// Story 5.1: 添加 clusters/notifications 关系
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
-  name         String?
-  passwordHash String?    @map("password_hash")
-  createdAt    DateTime   @default(now()) @map("created_at")
-  bookmarks    Bookmark[]
-  accounts     Account[]
-  sessions     Session[]
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  passwordHash  String?        @map("password_hash")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  bookmarks     Bookmark[]
+  accounts      Account[]
+  sessions      Session[]
+  clusters      Cluster[]
+  notifications Notification[]
 
   @@map("users")
 }
@@ -73,17 +76,62 @@ model VerificationToken {
 
 // Story 3.1: 书签核心 model
 // whySaved 是产品核心字段 — "为什么收藏这个"
+// Story 5.1: 添加 clusters 关系
 model Bookmark {
-  id        String   @id @default(cuid())
+  id        String            @id @default(cuid())
   url       String
   title     String
-  whySaved  String?  @map("why_saved")
-  quickTags String[] @map("quick_tags")
+  whySaved  String?           @map("why_saved")
+  quickTags String[]          @map("quick_tags")
+  userId    String            @map("user_id")
+  createdAt DateTime          @default(now()) @map("created_at")
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clusters BookmarkCluster[]
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("bookmarks")
+}
+
+// Story 5.1: AI 生成的主题分组
+model Cluster {
+  id        String            @id @default(cuid())
+  userId    String            @map("user_id")
+  name      String
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmarks BookmarkCluster[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@map("clusters")
+}
+
+// Story 5.1: 书签与主题的多对多关联
+model BookmarkCluster {
+  bookmarkId String   @map("bookmark_id")
+  clusterId  String   @map("cluster_id")
+  addedAt    DateTime @default(now()) @map("added_at")
+
+  bookmark Bookmark @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+  cluster  Cluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@id([bookmarkId, clusterId])
+  @@map("bookmark_clusters")
+}
+
+// Story 5.1: 应用内通知
+model Notification {
+  id        String   @id @default(cuid())
   userId    String   @map("user_id")
+  type      String   // CLUSTER_READY | REACTIVATION | MEMORY_PUSH
+  message   String
+  read      Boolean  @default(false)
   createdAt DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, createdAt(sort: Desc)])
-  @@map("bookmarks")
+  @@index([userId, read])
+  @@map("notifications")
 }
