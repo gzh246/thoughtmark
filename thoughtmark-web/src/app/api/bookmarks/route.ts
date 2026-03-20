@@ -29,6 +29,28 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { url, title, whySaved, quickTags } = body
 
+    // ── Story 6.1: 免费层书签上限检查 ────────
+    const user = await prisma.user.findUnique({
+      where: { id: token.id as string },
+      select: { plan: true },
+    })
+    if (user?.plan !== "pro") {
+      const bookmarkCount = await prisma.bookmark.count({
+        where: { userId: token.id as string },
+      })
+      if (bookmarkCount >= 500) {
+        return NextResponse.json(
+          {
+            error: {
+              code: "PLAN_LIMIT",
+              message: "已达免费额度上限（500 条），升级 Pro 解锁无限书签",
+            },
+          },
+          { status: 403 }
+        )
+      }
+    }
+
     // ── 参数校验 ──────────────────────────────
     if (!url || !title) {
       return NextResponse.json(

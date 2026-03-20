@@ -32,10 +32,25 @@ export default function ClustersPage() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [plan, setPlan] = useState<string>("free");
 
   useEffect(() => {
+    checkSubscription();
     fetchClusters();
   }, []);
+
+  // Story 6.1: 检查订阅状态
+  const checkSubscription = async () => {
+    try {
+      const res = await fetch("/api/subscription");
+      if (res.ok) {
+        const json = await res.json();
+        setPlan(json.data.plan);
+      }
+    } catch {
+      // 默认 free
+    }
+  };
 
   const fetchClusters = async () => {
     try {
@@ -125,7 +140,23 @@ export default function ClustersPage() {
       </header>
 
       <main className="mx-auto max-w-3xl space-y-4 px-4 py-6">
-        {clusters.length === 0 ? (
+        {/* Story 6.1: 免费用户 Pro 引导 */}
+        {plan !== "pro" && clusters.length > 0 ? (
+          <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-8 text-center dark:border-indigo-800 dark:bg-indigo-950/50">
+            <h2 className="text-lg font-bold text-indigo-700 dark:text-indigo-300">
+              🔒 AI 主题整理是 Pro 专属功能
+            </h2>
+            <p className="mt-2 text-sm text-indigo-600/70 dark:text-indigo-400/70">
+              升级 Pro 计划，解锁 AI 智能聚类、无限书签收藏等高级功能
+            </p>
+            <a
+              href="/settings"
+              className="mt-4 inline-block rounded-lg bg-indigo-600 px-6 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+            >
+              了解 Pro →
+            </a>
+          </div>
+        ) : clusters.length === 0 ? (
           <div className="rounded-xl border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
             <p className="text-sm text-zinc-400">
               还没有聚类结果。收藏 20 条以上带注解的书签后，AI 会自动为你整理主题。

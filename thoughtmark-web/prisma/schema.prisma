@@ -16,17 +16,21 @@ datasource db {
 // Story 2.2: 添加 accounts/sessions 关系（NextAuth OAuth）
 // Story 3.1: 添加 bookmarks 关系
 // Story 5.1: 添加 clusters/notifications 关系
+// Story 6.1: 添加 plan/planExpiresAt/isAdmin
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  name          String?
-  passwordHash  String?        @map("password_hash")
-  createdAt     DateTime       @default(now()) @map("created_at")
-  bookmarks     Bookmark[]
-  accounts      Account[]
-  sessions      Session[]
-  clusters      Cluster[]
-  notifications Notification[]
+  id             String         @id @default(cuid())
+  email          String         @unique
+  name           String?
+  passwordHash   String?        @map("password_hash")
+  plan           String         @default("free") // "free" | "pro"
+  planExpiresAt  DateTime?      @map("plan_expires_at")
+  isAdmin        Boolean        @default(false) @map("is_admin")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  bookmarks      Bookmark[]
+  accounts       Account[]
+  sessions       Session[]
+  clusters       Cluster[]
+  notifications  Notification[]
 
   @@map("users")
 }
