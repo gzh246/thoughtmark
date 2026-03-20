@@ -21,8 +21,8 @@ const client = new OpenAI({
  * @returns number[][] 每条文本对应一个向量
  */
 export async function getEmbeddings(texts: string[]): Promise<number[][]> {
-  // DashScope 限制单次最多 25 条，分批处理
-  const batchSize = 25
+  // DashScope 限制单次最多 10 条，分批处理
+  const batchSize = 10
   const allEmbeddings: number[][] = []
 
   for (let i = 0; i < texts.length; i += batchSize) {
