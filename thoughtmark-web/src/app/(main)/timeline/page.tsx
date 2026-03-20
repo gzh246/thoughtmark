@@ -5,6 +5,7 @@
  * Server Component 壳，内嵌 TimelineContent Client Component
  */
 import TimelineContent from "@/components/timeline/TimelineContent";
+import NotificationBell from "@/components/NotificationBell";
 
 export const metadata = {
   title: "Thoughtmark — 知识时间轴",
@@ -22,6 +23,7 @@ export default function TimelinePage() {
           </h1>
           <div className="flex items-center gap-3">
             <span className="text-xs text-zinc-400">知识时间轴</span>
+            <NotificationBell />
             <a href="/clusters" className="text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
               🧠
             </a>
