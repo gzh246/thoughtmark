@@ -9,6 +9,8 @@
  */
 import { useState, useEffect } from 'react';
 import { apiPost, isAuthenticated, saveAuthToken } from '@/lib/api';
+import { addToOfflineQueue, getQueueSize } from '@/lib/storage';
+import type { OfflineBookmark } from '@/lib/storage';
 import './App.css';
 
 /** 快选标签选项 */
@@ -26,8 +28,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tokenInput, setTokenInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'offline'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [offlineCount, setOfflineCount] = useState(0);
 
   // ── 初始化：获取当前 Tab + 检查登录 ──────────
   useEffect(() => {
@@ -78,8 +81,25 @@ function App() {
         setStatus('error');
       }
     } catch {
-      setErrorMsg('网络错误，请检查连接');
-      setStatus('error');
+      // 网络错误 → 走离线保存路径（Story 3.3）
+      try {
+        const offlineBookmark: OfflineBookmark = {
+          url,
+          title,
+          annotation: skipAnnotation ? undefined : (whySaved || undefined),
+          tags: skipAnnotation ? [] : selectedTags,
+          savedAt: new Date().toISOString(),
+        };
+        await addToOfflineQueue(offlineBookmark);
+        const count = await getQueueSize();
+        setOfflineCount(count);
+        setStatus('offline');
+        // 2 秒后关闭弹窗
+        setTimeout(() => window.close(), 2000);
+      } catch {
+        setErrorMsg('保存失败，请稍后重试');
+        setStatus('error');
+      }
     } finally {
       setLoading(false);
     }
@@ -128,6 +148,19 @@ function App() {
         <div className="success-message">
           <span className="success-icon">✅</span>
           <p>收藏成功！</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── 离线暂存成功（Story 3.3）────────────────
+  if (status === 'offline') {
+    return (
+      <div className="popup-container">
+        <div className="offline-message">
+          <span className="success-icon">📦</span>
+          <p>已暂存，待网络恢复后同步</p>
+          <p className="offline-count">队列中共 {offlineCount} 条待同步</p>
         </div>
       </div>
     );

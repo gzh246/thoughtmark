@@ -42,7 +42,7 @@ So that 未来能快速回忆"为什么收藏这个页面"。
   - [x] Web `tsc --noEmit` 0 错误
   - [x] Web `npm run lint` 0 错误
   - [x] Extension `tsc --noEmit` 0 错误
-  - [ ] Git push
+  - [x] Git push
 
 ## Dev Notes
 

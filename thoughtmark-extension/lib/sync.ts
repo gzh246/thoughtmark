@@ -4,24 +4,77 @@
  * 监听网络状态变化，在网络恢复时自动将离线队列中的书签
  * 批量同步到 thoughtmark-web 服务器。
  *
- * TODO(Story-3.3): 实现完整的同步逻辑
+ * Story 3.3: 完整同步实现
  * - Service Worker 检测网络重连
- * - 批量上传离线队列
- * - 同步成功后清空本地队列
- * - 冲突处理（同一 URL 24h 去重）
+ * - 逐条上传离线队列
+ * - 成功后清空本地队列
+ * - 字段映射：annotation → whySaved, tags → quickTags
  */
+import { getOfflineQueue, clearOfflineQueue } from './storage';
+import { apiPost } from './api';
 
 /**
- * 启动同步监听器
- * 在 background.ts 中调用
+ * 同步离线队列到服务器
+ *
+ * 逐条上传，全部成功后清空队列。
+ * 如果某条失败，停止同步并保留剩余项。
+ *
+ * @returns 成功同步的书签数量
  */
-export function startSyncListener(): void {
-  // TODO(Story-3.3): 实现网络状态监听 + 自动同步
+export async function syncOfflineQueue(): Promise<number> {
+  const queue = await getOfflineQueue();
+  if (queue.length === 0) return 0;
+
+  let successCount = 0;
+
+  for (const bookmark of queue) {
+    try {
+      // 字段映射：OfflineBookmark → API 字段
+      const res = await apiPost('/bookmarks', {
+        url: bookmark.url,
+        title: bookmark.title,
+        whySaved: bookmark.annotation || null,
+        quickTags: bookmark.tags || [],
+      });
+
+      if (!res.ok) {
+        // API 返回非 2xx，停止同步保留剩余
+        console.warn('[Sync] API 返回错误，停止同步', res.status);
+        break;
+      }
+
+      successCount++;
+    } catch {
+      // 网络错误，停止同步保留剩余
+      console.warn('[Sync] 网络错误，停止同步');
+      break;
+    }
+  }
+
+  // 如果全部成功，清空队列
+  if (successCount === queue.length) {
+    await clearOfflineQueue();
+  }
+
+  return successCount;
 }
 
 /**
- * 手动触发同步
+ * 启动同步监听器
+ * 在 background.ts （Service Worker）中调用
+ *
+ * 监听 WXT 的 runtime message 和网络状态恢复事件
  */
-export async function syncOfflineQueue(): Promise<void> {
-  // TODO(Story-3.3): 实现手动同步逻辑
+export function startSyncListener(): void {
+  // 监听 Service Worker 内的在线状态恢复
+  // 注意：Manifest V3 Service Worker 中 addEventListener('online') 可能不可靠
+  // 使用 chrome.runtime.onMessage 作为主要触发方式
+  browser.runtime.onMessage.addListener(async (message: unknown) => {
+    if (message && (message as { type?: string }).type === 'SYNC_OFFLINE_QUEUE') {
+      const count = await syncOfflineQueue();
+      console.log(`[Sync] 同步完成，上传 ${count} 条书签`);
+    }
+  });
+
+  console.log('[Sync] 同步监听器已启动');
 }
