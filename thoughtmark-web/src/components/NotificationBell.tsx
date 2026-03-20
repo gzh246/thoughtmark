@@ -24,20 +24,19 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // ── 获取未读通知 ──────────────────────────
-  const fetchNotifications = async () => {
-    try {
-      const res = await fetch("/api/notifications");
-      if (res.ok) {
-        const json = await res.json();
-        setNotifications(json.data || []);
-      }
-    } catch {
-      // 静默失败
-    }
-  };
-
   useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch("/api/notifications");
+        if (res.ok) {
+          const json = await res.json();
+          setNotifications(json.data || []);
+        }
+      } catch {
+        // 静默失败
+      }
+    };
+
     fetchNotifications();
     // 每 60 秒轮询一次
     const interval = setInterval(fetchNotifications, 60_000);
