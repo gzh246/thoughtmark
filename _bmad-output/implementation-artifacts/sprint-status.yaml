@@ -46,13 +46,13 @@ development_status:
   epic-1-retrospective: optional
 
   # ── Epic 2: 用户账户与认证系统 ──
-  epic-2: in-progress
+  epic-2: done
   2-1-email-registration-login: done
-  2-2-google-oauth-login: backlog
-  2-3-account-info-management: backlog
-  2-4-password-change-oauth-management: backlog
-  2-5-data-export-gdpr: backlog
-  2-6-account-deletion-gdpr: backlog
+  2-2-google-oauth-login: done
+  2-3-account-info-management: done
+  2-4-password-change-oauth-management: done
+  2-5-data-export-gdpr: done
+  2-6-account-deletion-gdpr: done
   epic-2-retrospective: optional
 
   # ── Epic 3: 书签收藏（插件核心功能）──
