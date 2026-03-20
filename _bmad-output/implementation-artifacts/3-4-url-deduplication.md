@@ -1,6 +1,6 @@
 # Story 3.4: URL 去重
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -17,21 +17,21 @@ So that 我的书签库不会产生冗余数据。
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: 后端 24h URL 去重检测
-  - [ ] 在 `POST /api/bookmarks` 创建前查询同 userId + url + 24h 内的记录
-  - [ ] 如果存在，返回 `409 DUPLICATE` + 已有书签的 id 和 createdAt
-  - [ ] 新增 `PUT /api/bookmarks/[id]` 覆盖更新 endpoint
+- [x] Task 1: 后端 24h URL 去重检测
+  - [x] 在 `POST /api/bookmarks` 创建前查询同 userId + url + 24h 内的记录
+  - [x] 如果存在，返回 `409 DUPLICATE` + 已有书签的 id 和 createdAt
+  - [x] 新增 `PUT /api/bookmarks/[id]` 覆盖更新 endpoint
 
-- [ ] Task 2: 前端冲突 UI
-  - [ ] 收到 409 后显示冲突提示（几小时前已收藏）
-  - [ ] "覆盖更新"按钮调用 PUT 端点
-  - [ ] "取消"按钮关闭弹窗
-  - [ ] 添加 `.conflict-message` CSS 样式
+- [x] Task 2: 前端冲突 UI
+  - [x] 收到 409 后显示冲突提示（几小时前已收藏）
+  - [x] "覆盖更新"按钮调用 PUT 端点
+  - [x] "取消"按钮关闭弹窗
+  - [x] 添加 `.conflict-message` CSS 样式
 
-- [ ] Task 3: 验证
-  - [ ] Web `tsc --noEmit` + `npm run lint`
-  - [ ] Extension `tsc --noEmit`
-  - [ ] Git push + CI 绿色
+- [x] Task 3: 验证
+  - [x] Web `tsc --noEmit` + `npm run lint`
+  - [x] Extension `tsc --noEmit`
+  - [x] Git push + CI 绿色
 
 ## Dev Notes
 
@@ -56,4 +56,14 @@ Gemini 2.5 Pro (Antigravity)
 
 ### File List
 
+| 文件 | 操作 | 说明 |
+|---|---|---|
+| `thoughtmark-web/src/app/api/bookmarks/route.ts` | 修改 | 添加 24h URL 去重检测（409 DUPLICATE） |
+| `thoughtmark-web/src/app/api/bookmarks/[id]/route.ts` | 新建 | PUT 覆盖更新端点 |
+| `thoughtmark-extension/lib/api.ts` | 修改 | 添加 `apiPut` 快捷方法 |
+| `thoughtmark-extension/entrypoints/popup/App.tsx` | 修改 | 409 处理 + 冲突选择 UI + 覆盖更新 handler |
+| `thoughtmark-extension/entrypoints/popup/App.css` | 修改 | `.conflict-message` 样式 |
+
 ### Change Log
+
+- 2026-03-20: Story 3.4 完成实现（commit c635683）
