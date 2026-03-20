@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * 书签详情侧边栏（Story 4.3）
+ * 书签详情侧边栏（Story 4.3 + 4.4）
  *
  * 功能：
  * - 完整信息展示：URL、标题、注解、标签、收藏时间
  * - 编辑注解（inline）
+ * - 手动标签管理（回车添加 + × 删除）
  * - 删除书签（确认对话框）
  */
 import { useState } from "react";
@@ -30,6 +31,9 @@ export default function BookmarkDetail({
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // Story 4.4: 手动标签管理
+  const [tags, setTags] = useState<string[]>(bookmark.quickTags);
+  const [tagInput, setTagInput] = useState("");
 
   // ── 保存编辑 ──────────────────────────────
   const handleSave = async () => {
@@ -67,6 +71,39 @@ export default function BookmarkDetail({
     } finally {
       setDeleting(false);
     }
+  };
+
+  // ── Story 4.4: 添加标签 ────────────────────
+  const updateTags = async (newTags: string[]) => {
+    setTags(newTags);
+    try {
+      const res = await fetch(`/api/bookmarks/${bookmark.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quickTags: newTags }),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        onUpdated(json.data);
+      }
+    } catch {
+      // 回滚
+      setTags(bookmark.quickTags);
+    }
+  };
+
+  const handleAddTag = () => {
+    const tag = tagInput.trim();
+    if (!tag || tags.includes(tag)) {
+      setTagInput("");
+      return;
+    }
+    updateTags([...tags, tag]);
+    setTagInput("");
+  };
+
+  const handleRemoveTag = (tag: string) => {
+    updateTags(tags.filter((t) => t !== tag));
   };
 
   return (
@@ -156,23 +193,33 @@ export default function BookmarkDetail({
           )}
         </div>
 
-        {/* 标签 */}
+        {/* 标签（Story 4.4: 可编辑）*/}
         <div>
           <label className="mb-1 block text-xs font-medium text-zinc-400">标签</label>
-          {bookmark.quickTags.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {bookmark.quickTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="inline-flex rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
+          <div className="flex flex-wrap gap-1.5">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
+              >
+                {tag}
+                <button
+                  onClick={() => handleRemoveTag(tag)}
+                  className="ml-0.5 text-indigo-400 hover:text-red-500 transition-colors"
                 >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-zinc-400">暂无标签</p>
-          )}
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddTag())}
+            placeholder="输入标签名，按回车添加"
+            className="mt-2 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs text-zinc-900 outline-none focus:border-indigo-400 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+          />
         </div>
 
         {/* 收藏时间 */}
