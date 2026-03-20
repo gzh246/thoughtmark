@@ -14,6 +14,7 @@
  */
 import type { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import type { Adapter } from "next-auth/adapters"
 import bcrypt from "bcryptjs"
@@ -52,6 +53,13 @@ export const authOptions: NextAuthOptions = {
 
         return { id: user.id, email: user.email, name: user.name }
       },
+    }),
+    // Story 2.2: Google OAuth — 需要 GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      // 同 Email 自动合并账户
+      allowDangerousEmailAccountLinking: true,
     }),
   ],
   session: { strategy: "jwt" },

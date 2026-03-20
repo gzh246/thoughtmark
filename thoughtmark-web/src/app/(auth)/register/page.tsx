@@ -269,6 +269,38 @@ export default function RegisterPage() {
         </button>
       </form>
 
+      {/* Story 2.2: Google OAuth */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          margin: "1.25rem 0",
+        }}
+      >
+        <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.1)" }} />
+        <span style={{ color: "#64748b", fontSize: "0.75rem" }}>或</span>
+        <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.1)" }} />
+      </div>
+
+      <button
+        type="button"
+        onClick={() => signIn("google", { callbackUrl: "/" })}
+        style={{
+          width: "100%",
+          padding: "0.625rem",
+          background: "transparent",
+          border: "1px solid rgba(255, 255, 255, 0.15)",
+          borderRadius: "8px",
+          color: "#f1f5f9",
+          fontSize: "0.875rem",
+          fontWeight: 500,
+          cursor: "pointer",
+        }}
+      >
+        🔗 Continue with Google
+      </button>
+
       <p
         style={{
           color: "#94a3b8",
