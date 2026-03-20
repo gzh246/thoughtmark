@@ -1,6 +1,6 @@
 # Story 3.5: 新用户 Onboarding 引导（FR22）
 
-Status: in-progress
+Status: done
 
 ## Story
 
@@ -21,19 +21,19 @@ So that 我能快速了解 Thoughtmark 的核心使用方式。
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Onboarding 组件
-  - [ ] 新建 `Onboarding.tsx` 组件（3 步引导 UI）
-  - [ ] 新建 `Onboarding.css` 样式
-  - [ ] Chrome Storage 读写 `onboardingCompleted` 标记
+- [x] Task 1: Onboarding 组件
+  - [x] 新建 `Onboarding.tsx` 组件（3 步引导 UI）
+  - [x] 新建 `Onboarding.css` 样式
+  - [x] Chrome Storage 读写 `onboardingCompleted` 标记
 
-- [ ] Task 2: 集成到 App.tsx
-  - [ ] 登录后检查 onboarding 状态
-  - [ ] 未完成则显示 Onboarding 替代主界面
-  - [ ] 完成/跳过后切换到收藏表单
+- [x] Task 2: 集成到 App.tsx
+  - [x] 登录后检查 onboarding 状态
+  - [x] 未完成则显示 Onboarding 替代主界面
+  - [x] 完成/跳过后切换到收藏表单
 
-- [ ] Task 3: 验证
-  - [ ] tsc --noEmit + lint
-  - [ ] Git push + CI
+- [x] Task 3: 验证
+  - [x] tsc --noEmit
+  - [x] Git push + CI
 
 ## Dev Notes
 
@@ -53,4 +53,12 @@ Gemini 2.5 Pro (Antigravity)
 
 ### File List
 
+| 文件 | 操作 | 说明 |
+|---|---|---|
+| `entrypoints/popup/Onboarding.tsx` | 新建 | 3 步引导组件（数据驱动 + Chrome Storage） |
+| `entrypoints/popup/Onboarding.css` | 新建 | dots 指示器 + 居中布局样式 |
+| `entrypoints/popup/App.tsx` | 修改 | 集成 onboarding 状态检查 + 渲染 |
+
 ### Change Log
+
+- 2026-03-20: Story 3.5 完成实现（commit 0088c5d）
