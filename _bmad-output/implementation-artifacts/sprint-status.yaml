@@ -1,5 +1,5 @@
 # generated: 2026-03-20
-# last_updated: 2026-03-20
+last_updated: 2026-03-20
 # project: Thoughtmark
 # project_key: NOKEY
 # tracking_system: file-system
@@ -56,17 +56,17 @@ development_status:
   epic-2-retrospective: optional
 
   # ── Epic 3: 书签收藏（插件核心功能）──
-  epic-3: in-progress
+  epic-3: done
   3-1-plugin-popup-bookmark: done
   3-2-annotation-quick-tags: done
   3-3-offline-sync: done
   3-4-url-deduplication: done
-  3-5-new-user-onboarding: review
+  3-5-new-user-onboarding: done
   epic-3-retrospective: optional
 
   # ── Epic 4: 时间轴与知识库浏览 ──
-  epic-4: backlog
-  4-1-timeline-basic-view: backlog
+  epic-4: in-progress
+  4-1-timeline-basic-view: in-progress
   4-2-time-range-filter: backlog
   4-3-bookmark-detail-edit: backlog
   4-4-manual-topic-tag-management: backlog

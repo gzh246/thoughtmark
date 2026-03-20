@@ -99,9 +99,10 @@ export async function POST(req: NextRequest) {
 /**
  * 书签 API — 获取用户书签列表
  *
- * GET /api/bookmarks?page=1&limit=20
+ * GET /api/bookmarks?page=1&limit=20&from=ISO&to=ISO
  *
  * 按 createdAt 降序排列（最新在前）
+ * Story 4.1: 支持 from/to 时间范围筛选
  */
 export async function GET(req: NextRequest) {
   try {
@@ -119,17 +120,27 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")))
     const skip = (page - 1) * limit
 
+    // Story 4.1: 时间范围筛选（from/to ISO 参数）
+    const from = searchParams.get("from")
+    const to = searchParams.get("to")
+    const dateFilter: Record<string, Date> = {}
+    if (from) dateFilter.gte = new Date(from)
+    if (to) dateFilter.lte = new Date(to)
+
+    const where = {
+      userId: token.id as string,
+      ...(Object.keys(dateFilter).length > 0 ? { createdAt: dateFilter } : {}),
+    }
+
     // ── 查询 ──────────────────────────────────
     const [bookmarks, total] = await Promise.all([
       prisma.bookmark.findMany({
-        where: { userId: token.id as string },
+        where,
         orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
-      prisma.bookmark.count({
-        where: { userId: token.id as string },
-      }),
+      prisma.bookmark.count({ where }),
     ])
 
     return NextResponse.json({
