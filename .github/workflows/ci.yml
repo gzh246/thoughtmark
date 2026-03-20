@@ -57,7 +57,10 @@ jobs:
           cache: 'npm'
           cache-dependency-path: thoughtmark-extension/package-lock.json
 
-      - run: npm ci
+      # 注意：这里用 npm install 而非 npm ci
+      # 原因：WXT 依赖 esbuild@^0.25，Vite 依赖 esbuild@^0.27，
+      # 嵌套依赖导致 npm ci 的严格 lockfile 验证失败（npm v10 已知问题）
+      - run: npm install
 
       - name: TypeScript Check
         run: npx tsc --noEmit
