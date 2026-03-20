@@ -1,0 +1,101 @@
+/* ── Story 3.5: Onboarding 引导样式 ──────── */
+
+.onboarding-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 16px 16px;
+  min-height: 280px;
+  justify-content: space-between;
+}
+
+/* 步骤指示器 */
+.onboarding-dots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s ease;
+}
+
+.dot-active {
+  background: var(--accent);
+  transform: scale(1.3);
+}
+
+.dot-done {
+  background: var(--accent);
+  opacity: 0.5;
+}
+
+/* 内容区域 */
+.onboarding-content {
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.onboarding-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.onboarding-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+
+.onboarding-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 260px;
+}
+
+/* 操作按钮 */
+.onboarding-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.onboarding-actions .btn-primary {
+  width: 100%;
+}
+
+.btn-skip {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.15s ease;
+}
+
+.btn-skip:hover {
+  color: var(--text-secondary);
+}
+
+/* 步骤计数 */
+.onboarding-counter {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 8px 0 0;
+}

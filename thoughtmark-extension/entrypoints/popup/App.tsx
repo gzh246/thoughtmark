@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import { apiPost, apiPut, isAuthenticated, saveAuthToken } from '@/lib/api';
 import { addToOfflineQueue, getQueueSize } from '@/lib/storage';
 import type { OfflineBookmark } from '@/lib/storage';
+import Onboarding from './Onboarding';
 import './App.css';
 
 /** 快选标签选项 */
@@ -33,6 +34,8 @@ function App() {
   const [offlineCount, setOfflineCount] = useState(0);
   // Story 3.4: 去重冲突数据
   const [conflictData, setConflictData] = useState<{ id: string; createdAt: string } | null>(null);
+  // Story 3.5: Onboarding 引导状态
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // ── 初始化：获取当前 Tab + 检查登录 ──────────
   useEffect(() => {
@@ -47,6 +50,14 @@ function App() {
       // 检查登录状态
       const loggedIn = await isAuthenticated();
       setIsLoggedIn(loggedIn);
+
+      // Story 3.5: 检查 onboarding 状态
+      if (loggedIn) {
+        const result = await browser.storage.local.get('onboardingCompleted') as Record<string, boolean | undefined>;
+        if (!result.onboardingCompleted) {
+          setShowOnboarding(true);
+        }
+      }
     })();
   }, []);
 
@@ -176,6 +187,15 @@ function App() {
             连接
           </button>
         </div>
+      </div>
+    );
+  }
+
+  // ── 新用户引导（Story 3.5）────────────────
+  if (showOnboarding) {
+    return (
+      <div className="popup-container">
+        <Onboarding onComplete={() => setShowOnboarding(false)} />
       </div>
     );
   }

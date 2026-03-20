@@ -61,7 +61,7 @@ development_status:
   3-2-annotation-quick-tags: done
   3-3-offline-sync: done
   3-4-url-deduplication: review
-  3-5-new-user-onboarding: backlog
+  3-5-new-user-onboarding: in-progress
   epic-3-retrospective: optional
 
   # ── Epic 4: 时间轴与知识库浏览 ──
