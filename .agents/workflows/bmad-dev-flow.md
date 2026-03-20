@@ -4,21 +4,20 @@ description: BMAD 驱动开发流程——从 Epic 开始到 Retrospective 的 7
 
 # BMAD Dev Flow
 
-每个 Story 的开发流程必须遵循以下 7 步：
+每个 Epic/Story 的开发流程必须遵循以下步骤。
+详细规范见 `rule/doc/BMAD开发流程规范.md`。
 
-// turbo-all
+## 0. 上下文恢复（⚠️ 每次新会话强制）
+
+阅读以下文件恢复上下文：
+- `_bmad-output/implementation-artifacts/sprint-status.yaml`
+- `project-context.md`
+- `docs/dev-history/开发执行日志.md`（最后一个章节）
+- `docs/dev-history/AI执行复盘与教训.md`（如存在）
 
 ## 1. 开 Epic — 阅读 AC
 
-当开始新 Epic 时：
-
-```bash
-# 阅读 Epic AC
-cat _bmad-output/planning-artifacts/epics.md
-# 阅读历史教训
-cat docs/dev-history/AI执行复盘与教训.md
-```
-
+- 阅读 `_bmad-output/planning-artifacts/epics.md` 中对应 Epic
 - 更新 `sprint-status.yaml`: `epic-X: in-progress`
 
 ## 2. 创建 Story 文件（⚠️ 强制）
@@ -32,6 +31,7 @@ cat docs/dev-history/AI执行复盘与教训.md
 - Story 标题 + 描述
 - Acceptance Criteria（从 epics.md 复制）
 - 技术方案要点
+- 新/改文件列表 + 是否需要新依赖
 
 然后更新 `sprint-status.yaml`: `X-Y-story-name: in-progress`
 
@@ -40,13 +40,22 @@ cat docs/dev-history/AI执行复盘与教训.md
 - 遵循 `project-context.md` 命名约定
 - 引入新依赖前**暂停审批**
 - 代码注释覆盖关键函数
+- 延期工作留 `TODO({阶段}-{模块}): {内容} — 原因: {原因}`
 
 ## 4. 验证（⚠️ 强制 — 3 项全过才能 commit）
 
+// turbo
 ```bash
 npx tsc --noEmit
+```
+
+// turbo
+```bash
 npm run lint
-npx prisma migrate dev  # 如有 schema 变更
+```
+
+```bash
+npx prisma migrate dev  # 仅在有 schema 变更时
 ```
 
 ## 5. 更新日志 + 宪法（⚠️ Story 完成后立即执行）
@@ -59,15 +68,18 @@ npx prisma migrate dev  # 如有 schema 变更
 
 ```bash
 git add -A
-git commit -m "feat(scope): Story X.Y - description"
+git commit -m "{type}({scope}): Story X.Y - {description}"
 git push origin master
 ```
+
+type: `feat` / `fix` / `docs` / `refactor`
+scope: `web` / `api` / `ext` / `db` / `ci`
 
 ## 7. Epic Retrospective（⚠️ Epic 全部 Stories 完成后）
 
 在 `docs/dev-history/` 中追加：
 - 💚 做好了什么
-- 🔴 踩坑了什么  
+- 🔴 踩坑了什么
 - 🔵 下次改进什么
 
-更新 `sprint-status.yaml`: `epic-X-retrospective: done`
+更新 `sprint-status.yaml`: `epic-X-retrospective: done`（不能留 optional）
