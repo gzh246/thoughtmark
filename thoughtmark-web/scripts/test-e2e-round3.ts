@@ -144,7 +144,7 @@ async function main() {
   // 汇总
   // ═══════════════════════════════════════════
   const pass3 = unreadAfter === 0 && verifyRead?.read === true
-  const pass4 = updated?.displayName === "E2E测试用户"
+  const pass4 = updated?.name === "E2E测试用户"
 
   console.log("━━━ 汇总 ━━━")
   console.log("  TEST 1 Admin 权限:", "✅")
