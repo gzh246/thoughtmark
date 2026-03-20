@@ -10,14 +10,15 @@
  * - 成功后清空本地队列
  * - 字段映射：annotation → whySaved, tags → quickTags
  */
-import { getOfflineQueue, clearOfflineQueue } from './storage';
+import { getOfflineQueue, removeFromQueue } from './storage';
 import { apiPost } from './api';
 
 /**
  * 同步离线队列到服务器
  *
- * 逐条上传，全部成功后清空队列。
+ * 从头部开始逐条上传，每条成功后立即从队列中移除（索引 0）。
  * 如果某条失败，停止同步并保留剩余项。
+ * 修复：之前全部成功才 clearOfflineQueue，部分成功时会重复上传。
  *
  * @returns 成功同步的书签数量
  */
@@ -43,17 +44,14 @@ export async function syncOfflineQueue(): Promise<number> {
         break;
       }
 
+      // 立即移除已成功的条目（始终移除索引 0，因为上一条已被移除）
+      await removeFromQueue(0);
       successCount++;
     } catch {
       // 网络错误，停止同步保留剩余
       console.warn('[Sync] 网络错误，停止同步');
       break;
     }
-  }
-
-  // 如果全部成功，清空队列
-  if (successCount === queue.length) {
-    await clearOfflineQueue();
   }
 
   return successCount;
