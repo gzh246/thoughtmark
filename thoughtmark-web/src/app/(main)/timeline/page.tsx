@@ -1,10 +1,10 @@
 /**
- * 时间轴页面（Story 4.1）
+ * 时间轴页面（Story 4.1 + 4.2）
  *
  * Web App 的核心页面 — 用户登录后的默认视图
- * Server Component 壳，内嵌 TimelineList Client Component
+ * Server Component 壳，内嵌 TimelineContent Client Component
  */
-import TimelineList from "@/components/timeline/TimelineList";
+import TimelineContent from "@/components/timeline/TimelineContent";
 
 export const metadata = {
   title: "Thoughtmark — 知识时间轴",
@@ -26,8 +26,9 @@ export default function TimelinePage() {
 
       {/* 内容区域 */}
       <main className="mx-auto max-w-2xl px-4 py-6">
-        <TimelineList />
+        <TimelineContent />
       </main>
     </div>
   );
 }
+

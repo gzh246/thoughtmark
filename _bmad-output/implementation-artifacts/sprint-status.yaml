@@ -66,8 +66,8 @@ development_status:
 
   # ── Epic 4: 时间轴与知识库浏览 ──
   epic-4: in-progress
-  4-1-timeline-basic-view: in-progress
-  4-2-time-range-filter: backlog
+  4-1-timeline-basic-view: done
+  4-2-time-range-filter: in-progress
   4-3-bookmark-detail-edit: backlog
   4-4-manual-topic-tag-management: backlog
   epic-4-retrospective: optional
