@@ -22,6 +22,9 @@ export default function TimelinePage() {
           </h1>
           <div className="flex items-center gap-3">
             <span className="text-xs text-zinc-400">知识时间轴</span>
+            <a href="/clusters" className="text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
+              🧠
+            </a>
             <a href="/settings" className="text-sm text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300">
               ⚙️
             </a>
