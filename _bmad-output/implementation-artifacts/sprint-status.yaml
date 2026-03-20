@@ -82,10 +82,10 @@ development_status:
   epic-5-retrospective: optional
 
   # ── Epic 6: 订阅、计费与运营后台 ──
-  epic-6: in-progress
-  6-1-free-tier-limits: in-progress
-  6-2-pro-subscription-purchase: backlog
-  6-3-subscription-status-management: backlog
-  6-4-operations-dashboard: backlog
-  6-5-operations-email: backlog
+  epic-6: done
+  6-1-free-tier-limits: done
+  6-2-pro-subscription-purchase: done
+  6-3-subscription-status-management: done
+  6-4-operations-dashboard: done
+  6-5-operations-email: done
   epic-6-retrospective: optional
