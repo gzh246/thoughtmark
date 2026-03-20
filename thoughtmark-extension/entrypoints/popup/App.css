@@ -267,3 +267,37 @@ body {
 .token-input:focus {
   border-color: var(--accent);
 }
+
+/* ── Story 3.4: URL 去重冲突 ──────────── */
+.conflict-message {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.conflict-message p {
+  font-size: 13px;
+  color: var(--text-primary);
+  margin: 8px 0 16px;
+}
+
+.conflict-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}

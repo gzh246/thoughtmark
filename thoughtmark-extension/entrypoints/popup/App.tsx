@@ -8,7 +8,7 @@
  * - "保存" 和 "跳过" 按钮
  */
 import { useState, useEffect } from 'react';
-import { apiPost, isAuthenticated, saveAuthToken } from '@/lib/api';
+import { apiPost, apiPut, isAuthenticated, saveAuthToken } from '@/lib/api';
 import { addToOfflineQueue, getQueueSize } from '@/lib/storage';
 import type { OfflineBookmark } from '@/lib/storage';
 import './App.css';
@@ -28,9 +28,11 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [tokenInput, setTokenInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'offline'>('idle');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error' | 'offline' | 'duplicate'>('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const [offlineCount, setOfflineCount] = useState(0);
+  // Story 3.4: 去重冲突数据
+  const [conflictData, setConflictData] = useState<{ id: string; createdAt: string } | null>(null);
 
   // ── 初始化：获取当前 Tab + 检查登录 ──────────
   useEffect(() => {
@@ -75,6 +77,17 @@ function App() {
         setStatus('success');
         // 1 秒后关闭弹窗
         setTimeout(() => window.close(), 1000);
+      } else if (res.status === 409) {
+        // Story 3.4: URL 去重冲突
+        const data = await res.json();
+        const existing = data.data?.existingBookmark;
+        if (existing) {
+          setConflictData({ id: existing.id, createdAt: existing.createdAt });
+          setStatus('duplicate');
+        } else {
+          setErrorMsg(data.error?.message || '已收藏过');
+          setStatus('error');
+        }
       } else {
         const data = await res.json();
         setErrorMsg(data.error?.message || '保存失败');
@@ -110,6 +123,32 @@ function App() {
     if (!tokenInput.trim()) return;
     await saveAuthToken(tokenInput.trim());
     setIsLoggedIn(true);
+  };
+
+  // ── 覆盖更新（Story 3.4: URL 去重冲突时） ────────
+  const handleOverwrite = async () => {
+    if (!conflictData) return;
+    setLoading(true);
+    try {
+      const res = await apiPut(`/bookmarks/${conflictData.id}`, {
+        title,
+        whySaved: whySaved || null,
+        quickTags: selectedTags,
+      });
+      if (res.ok) {
+        setStatus('success');
+        setTimeout(() => window.close(), 1000);
+      } else {
+        const data = await res.json();
+        setErrorMsg(data.error?.message || '更新失败');
+        setStatus('error');
+      }
+    } catch {
+      setErrorMsg('网络错误');
+      setStatus('error');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // ── 未登录：显示 Token 输入界面 ──────────
@@ -161,6 +200,36 @@ function App() {
           <span className="success-icon">📦</span>
           <p>已暂存，待网络恢复后同步</p>
           <p className="offline-count">队列中共 {offlineCount} 条待同步</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ── URL 去重冲突（Story 3.4）────────────────
+  if (status === 'duplicate' && conflictData) {
+    const hoursAgo = Math.round(
+      (Date.now() - new Date(conflictData.createdAt).getTime()) / (1000 * 60 * 60)
+    );
+    return (
+      <div className="popup-container">
+        <div className="conflict-message">
+          <span className="success-icon">⚠️</span>
+          <p>你在 {hoursAgo > 0 ? `${hoursAgo} 小时` : '刚刚'} 前已收藏过这个页面</p>
+          <div className="conflict-actions">
+            <button
+              className="btn btn-primary"
+              onClick={handleOverwrite}
+              disabled={loading}
+            >
+              {loading ? '更新中...' : '覆盖更新'}
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => window.close()}
+            >
+              取消
+            </button>
+          </div>
         </div>
       </div>
     );

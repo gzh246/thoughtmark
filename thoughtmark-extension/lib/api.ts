@@ -86,3 +86,16 @@ export async function apiPost(
     body: JSON.stringify(body),
   });
 }
+
+/**
+ * PUT 请求快捷方法（Story 3.4: 覆盖更新）
+ */
+export async function apiPut(
+  path: string,
+  body: unknown
+): Promise<Response> {
+  return apiFetch(path, {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  });
+}

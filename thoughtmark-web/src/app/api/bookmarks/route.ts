@@ -56,6 +56,25 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ── URL 去重检测（Story 3.4: 24h 内同 URL）──
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    const existingBookmark = await prisma.bookmark.findFirst({
+      where: {
+        userId: token.id as string,
+        url,
+        createdAt: { gte: twentyFourHoursAgo },
+      },
+    })
+    if (existingBookmark) {
+      return NextResponse.json(
+        {
+          error: { code: "DUPLICATE", message: "你已收藏过这个页面" },
+          data: { existingBookmark },
+        },
+        { status: 409 }
+      )
+    }
+
     // ── 创建书签 ──────────────────────────────
     const bookmark = await prisma.bookmark.create({
       data: {
