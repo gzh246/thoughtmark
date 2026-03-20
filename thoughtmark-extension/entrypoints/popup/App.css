@@ -94,6 +94,18 @@ body {
 .char-count {
   font-size: 11px;
   color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+/* Story 3.2: 字数接近上限警告色 */
+.char-warning {
+  color: #f59e0b;
+}
+
+/* Story 3.2: 字数达到上限红色 */
+.char-limit {
+  color: var(--error);
+  font-weight: 600;
 }
 
 .annotation-input {
@@ -134,7 +146,8 @@ body {
   color: var(--text-secondary);
   font-size: 11px;
   cursor: pointer;
-  transition: all 0.15s;
+  /* Story 3.2: 增强过渡动画 */
+  transition: all 0.2s ease;
 }
 
 .tag-btn:hover {
@@ -142,10 +155,13 @@ body {
   color: var(--accent-hover);
 }
 
+/* Story 3.2: 增强选中状态样式 */
 .tag-selected {
   background: rgba(99, 102, 241, 0.2);
   border-color: var(--accent);
   color: var(--accent-hover);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
 }
 
 /* ── 按钮 ────────────────────────────── */

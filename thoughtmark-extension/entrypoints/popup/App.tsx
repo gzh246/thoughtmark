@@ -148,7 +148,7 @@ function App() {
       <div className="annotation-section">
         <label className="label">
           这让我想到……
-          <span className="char-count">
+          <span className={`char-count${whySaved.length >= 120 && whySaved.length < MAX_WHY_SAVED_LENGTH ? ' char-warning' : ''}${whySaved.length >= MAX_WHY_SAVED_LENGTH ? ' char-limit' : ''}`}>
             {whySaved.length}/{MAX_WHY_SAVED_LENGTH}
           </span>
         </label>
@@ -173,7 +173,7 @@ function App() {
             className={`tag-btn ${selectedTags.includes(tag) ? 'tag-selected' : ''}`}
             onClick={() => toggleTag(tag)}
           >
-            {tag}
+            {selectedTags.includes(tag) ? `✓ ${tag}` : tag}
           </button>
         ))}
       </div>

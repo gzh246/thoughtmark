@@ -34,6 +34,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // ── 注解长度校验（Story 3.2: max 140 字符）──
+    if (whySaved && whySaved.length > 140) {
+      return NextResponse.json(
+        { error: { code: "VALIDATION_ERROR", message: "注解不能超过 140 字" } },
+        { status: 400 }
+      )
+    }
+
+    // ── 快选标签白名单校验（Story 3.2: PRD FR9）──
+    const VALID_QUICK_TAGS = ["学习资料", "工作参考", "灵感收藏"]
+    if (quickTags && Array.isArray(quickTags)) {
+      const invalidTags = quickTags.filter(
+        (tag: string) => !VALID_QUICK_TAGS.includes(tag)
+      )
+      if (invalidTags.length > 0) {
+        return NextResponse.json(
+          { error: { code: "VALIDATION_ERROR", message: "无效的标签" } },
+          { status: 400 }
+        )
+      }
+    }
+
     // ── 创建书签 ──────────────────────────────
     const bookmark = await prisma.bookmark.create({
       data: {
