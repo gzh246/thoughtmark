@@ -65,11 +65,11 @@ development_status:
   epic-3-retrospective: optional
 
   # ── Epic 4: 时间轴与知识库浏览 ──
-  epic-4: in-progress
+  epic-4: done
   4-1-timeline-basic-view: done
   4-2-time-range-filter: done
   4-3-bookmark-detail-edit: done
-  4-4-manual-topic-tag-management: in-progress
+  4-4-manual-topic-tag-management: done
   epic-4-retrospective: optional
 
   # ── Epic 5: AI 聚类与智能知识整理 ──
