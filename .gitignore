@@ -1,0 +1,40 @@
+# Operating system and editors
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.sublime-*
+
+# Dependencies and build output
+node_modules/
+.next/
+.output/
+dist/
+out/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.log
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+docker-compose.override.yml
+
+# Browser and test profiles
+.playwright-profile/
+.playwright-mcp/
+
+# Private working material that must not enter the portfolio repository
+.agents/
+.claude/
+.gemini/
+_bmad/
+_bmad-output/
+docs/dev-history/
+docs/部分临时文档/
+project-context.md

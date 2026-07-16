@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+/**
+ * Thoughtmark Web App 全局样式
+ *
+ * 🅲 Web App UI 统一：与 Extension 共享色系
+ *
+ * ⚠️ Tailwind v4 的 @theme inline 会把 var() 当编译时常量，
+ * 导致 .dark 运行时覆盖失效。解决方案：
+ * 用 @layer utilities 手动注册每个 utility class，
+ * 直接引用 CSS 变量 var(--xxx)。
+ */
+
+/* ── Light Mode Token（默认） ── */
+:root {
+  --tm-bg: #f8f4ee;
+  --tm-fg: #2c2c2c;
+  --tm-bg2: #ffffff;
+  --tm-bg-card: #f9f6f0;
+  --tm-bg-hover: #f0ece4;
+  --tm-text2: #888888;
+  --tm-muted: #a08060;
+  --tm-accent: #7c3aed;
+  --tm-accent-h: #6d28d9;
+  --tm-accent-sub: rgba(124, 58, 237, 0.12);
+  --tm-accent-grad: linear-gradient(135deg, #7c3aed, #6d28d9);
+  --tm-border: rgba(0, 0, 0, 0.1);
+  --tm-border-h: rgba(0, 0, 0, 0.18);
+  --tm-success: #28a745;
+  --tm-error: #dc3545;
+  --tm-warn: #e8943a;
+}
+
+/* ── Dark Mode Token ── */
+:root.dark {
+  --tm-bg: #0f0f1a;
+  --tm-fg: #f0f0f0;
+  --tm-bg2: #1a1a2e;
+  --tm-bg-card: #242436;
+  --tm-bg-hover: #2e2e48;
+  --tm-text2: #9090a0;
+  --tm-muted: #606070;
+  --tm-accent: #6366f1;
+  --tm-accent-h: #818cf8;
+  --tm-accent-sub: rgba(99, 102, 241, 0.15);
+  --tm-accent-grad: linear-gradient(135deg, #6366f1, #8b5cf6);
+  --tm-border: rgba(255, 255, 255, 0.1);
+  --tm-border-h: rgba(255, 255, 255, 0.18);
+  --tm-success: #22c55e;
+  --tm-error: #ef4444;
+  --tm-warn: #f59e0b;
+}
+
+/* ── 字体 ── */
+@theme inline {
+  --font-sans: 'Inter', var(--font-inter), system-ui, sans-serif;
+  --font-mono: monospace;
+}
+
+/* ── Utility Classes（直接引用 CSS var，运行时动态） ── */
+@layer utilities {
+  /* 背景 */
+  .bg-tm         { background-color: var(--tm-bg); }
+  .bg-tm2        { background-color: var(--tm-bg2); }
+  .bg-tm-card    { background-color: var(--tm-bg-card); }
+  .bg-tm-hover   { background-color: var(--tm-bg-hover); }
+  .bg-tm-accent  { background-color: var(--tm-accent); }
+  .bg-tm-accent-sub { background-color: var(--tm-accent-sub); }
+  .bg-tm-error   { background-color: var(--tm-error); }
+  .bg-tm2-80     { background-color: color-mix(in srgb, var(--tm-bg2) 80%, transparent); }
+  .bg-tm-error-10 { background-color: color-mix(in srgb, var(--tm-error) 10%, transparent); }
+  .bg-tm-error-5  { background-color: color-mix(in srgb, var(--tm-error) 5%, transparent); }
+  .bg-tm-accent-30 { background-color: color-mix(in srgb, var(--tm-accent) 30%, transparent); }
+
+  /* 文字 */
+  .text-tm       { color: var(--tm-fg); }
+  .text-tm2      { color: var(--tm-text2); }
+  .text-tm-muted { color: var(--tm-muted); }
+  .text-tm-accent{ color: var(--tm-accent); }
+  .text-tm-accent-h { color: var(--tm-accent-h); }
+  .text-tm-accent-60 { color: color-mix(in srgb, var(--tm-accent) 60%, transparent); }
+  .text-tm-success { color: var(--tm-success); }
+  .text-tm-error { color: var(--tm-error); }
+
+  /* 边框 */
+  .border-tm     { border-color: var(--tm-border); }
+  .border-tm-h   { border-color: var(--tm-border-h); }
+  .border-tm-accent { border-color: var(--tm-accent); }
+  .border-tm-error  { border-color: var(--tm-error); }
+  .border-tm-50  { border-color: color-mix(in srgb, var(--tm-border) 50%, transparent); }
+  .border-tm-error-30 { border-color: color-mix(in srgb, var(--tm-error) 30%, transparent); }
+  .border-tm-accent-30 { border-color: color-mix(in srgb, var(--tm-accent) 30%, transparent); }
+
+  /* 聚焦 */
+  .focus\:border-tm-accent:focus { border-color: var(--tm-accent); }
+  .focus\:border-tm-error:focus  { border-color: var(--tm-error); }
+
+  /* 悬停 */
+  .hover\:bg-tm-hover:hover   { background-color: var(--tm-bg-hover); }
+  .hover\:text-tm2:hover      { color: var(--tm-text2); }
+  .hover\:text-tm-accent-h:hover { color: var(--tm-accent-h); }
+  .hover\:text-tm-error:hover { color: var(--tm-error); }
+  .hover\:border-tm-accent:hover { border-color: var(--tm-accent); }
+  .hover\:border-tm-h:hover   { border-color: var(--tm-border-h); }
+}
+
+/* ── 全局基础 ── */
+body {
+  background-color: var(--tm-bg);
+  color: var(--tm-fg);
+  font-family: var(--font-sans);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── 通用按钮样式 ── */
+.btn-accent {
+  background: var(--tm-accent-grad);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-accent:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px var(--tm-accent-sub);
+}
+
+/* ── UI 打磨：卡片阴影 ── */
+.card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.card-shadow-hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08), 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+:root.dark .card-shadow {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+:root.dark .card-shadow-hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* ── UI 打磨：进场动画 ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fadeInUp {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+/* ── UI 打磨：标签多色化 ── */
+.tag-学习资料 {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+.tag-工作参考 {
+  background-color: rgba(124, 58, 237, 0.12);
+  color: #7c3aed;
+}
+.tag-灵感收藏 {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+:root.dark .tag-学习资料 {
+  background-color: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+}
+:root.dark .tag-工作参考 {
+  background-color: rgba(167, 139, 250, 0.15);
+  color: #a78bfa;
+}
+:root.dark .tag-灵感收藏 {
+  background-color: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+/* ── UI 打磨：Accent Bar（书签卡片左侧渐变条） ── */
+.accent-bar {
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--tm-accent-grad);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.group:hover .accent-bar {
+  opacity: 1;
+}
+
+/* ── UI 打磨：聚类图标彩色圆点 ── */
+.cluster-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cluster-dot-1 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+.cluster-dot-2 { background: linear-gradient(135deg, #3b82f6, #6366f1); }
+.cluster-dot-3 { background: linear-gradient(135deg, #10b981, #06b6d4); }

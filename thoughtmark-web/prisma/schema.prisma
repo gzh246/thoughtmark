@@ -1,0 +1,184 @@
+// prisma/schema.prisma
+// Thoughtmark 数据模型 — Prisma 是数据库唯一真相来源
+// 所有 schema 变更必须通过 prisma migrate，禁止手动改数据库
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Story 1.1: 初始 User model
+// Story 2.1: 添加 passwordHash
+// Story 2.2: 添加 accounts/sessions 关系（NextAuth OAuth）
+// Story 3.1: 添加 bookmarks 关系
+// Story 5.1: 添加 clusters/notifications 关系
+// Story 6.1: 添加 plan/planExpiresAt/isAdmin
+model User {
+  id             String         @id @default(cuid())
+  email          String         @unique
+  name           String?
+  passwordHash   String?        @map("password_hash")
+  plan           String         @default("free") // "free" | "pro"
+  planExpiresAt  DateTime?      @map("plan_expires_at")
+  isAdmin        Boolean        @default(false) @map("is_admin")
+  settings       Json?          @default("{}") // B12: Feature Flag 开关 {"memoryPush": true, "emailReport": true}
+  createdAt      DateTime       @default(now()) @map("created_at")
+  bookmarks      Bookmark[]
+  accounts       Account[]
+  sessions       Session[]
+  clusters       Cluster[]
+  notifications  Notification[]
+
+  @@map("users")
+}
+
+// Story 2.2: NextAuth PrismaAdapter — OAuth 账户关联
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+// Story 2.2: NextAuth Session（数据库策略用）
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Story 2.2: 邮箱验证 token（预留）
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// Story 3.1: 书签核心 model
+// whySaved 是产品核心字段 — "为什么收藏这个"
+// Story 5.1: 添加 clusters 关系
+// Story 7.2: 添加 pageContent / contentSummary (V2 正文提取)
+// Story 12.1: 添加 shareToken (分享链接)
+model Bookmark {
+  id             String            @id @default(cuid())
+  url            String
+  title          String
+  whySaved       String?           @map("why_saved")
+  quickTags      String[]          @map("quick_tags")
+  pageContent    String?           @map("page_content") @db.Text   // V2: 网页正文（Readability 提取）
+  contentSummary String?           @map("content_summary") @db.Text // V2: AI 生成摘要
+  shareToken     String?           @unique @map("share_token")       // V2: 分享链接 token
+  shareMode      String?           @map("share_mode")                // V2: 分享模式 "public" | "private"
+  sharePassword  String?           @map("share_password")            // V2: 私密分享密码
+  userId         String            @map("user_id")
+  createdAt      DateTime          @default(now()) @map("created_at")
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clusters BookmarkCluster[]
+  chunks   BookmarkChunk[]    // Story 14.1: Chunk 粒度向量存储
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@map("bookmarks")
+}
+
+// Story 5.1: AI 生成的主题分组
+model Cluster {
+  id        String            @id @default(cuid())
+  userId    String            @map("user_id")
+  name      String
+  source    String            @default("auto") @map("source") // D3: 来源 "auto" | "deep" | "manual"
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmarks BookmarkCluster[]
+
+  @@index([userId, updatedAt(sort: Desc)])
+  @@map("clusters")
+}
+
+// Story 5.1: 书签与主题的多对多关联
+model BookmarkCluster {
+  bookmarkId String   @map("bookmark_id")
+  clusterId  String   @map("cluster_id")
+  addedAt    DateTime @default(now()) @map("added_at")
+
+  bookmark Bookmark @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+  cluster  Cluster  @relation(fields: [clusterId], references: [id], onDelete: Cascade)
+
+  @@id([bookmarkId, clusterId])
+  @@map("bookmark_clusters")
+}
+
+// Story 5.1: 应用内通知
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // CLUSTER_READY | REACTIVATION | MEMORY_PUSH
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+// Q4: AI 洞察结果缓存（7 天过期）
+model InsightCache {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // intent-patterns | cognitive-evolution | learning-path
+  cacheKey  String   @map("cache_key") // 用于区分不同参数（如 clusterId）
+  content   String   @db.Text
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, type, cacheKey])
+  @@index([expiresAt])
+  @@map("insight_cache")
+}
+
+// Story 14.1: Chunk 粒度向量存储（V3 智能检索）
+// embedding vector(1024) 列通过原始 SQL migration 添加（Prisma 不支持 vector 类型）
+// 写入/读取均使用 $executeRawUnsafe / $queryRawUnsafe
+model BookmarkChunk {
+  id         String   @id @default(cuid())
+  bookmarkId String   @map("bookmark_id")
+  chunkIndex Int      @map("chunk_index") // 段落序号，0-based
+  chunkText  String   @map("chunk_text") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bookmark Bookmark @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+
+  @@unique([bookmarkId, chunkIndex])
+  @@index([bookmarkId])
+  @@map("bookmark_chunks")
+}

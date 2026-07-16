@@ -1,0 +1,42 @@
+name: thoughtmark
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: "${THOUGHTMARK_IMAGE:-thoughtmark:local}"
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: "${DATABASE_URL:?Set DATABASE_URL in the deployment environment}"
+      NEXTAUTH_SECRET: "${NEXTAUTH_SECRET:?Set NEXTAUTH_SECRET in the deployment environment}"
+      NEXTAUTH_URL: "${NEXTAUTH_URL:?Set NEXTAUTH_URL in the deployment environment}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:?Set GOOGLE_CLIENT_ID in the deployment environment}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:?Set GOOGLE_CLIENT_SECRET in the deployment environment}"
+      REDIS_URL: "${REDIS_URL:?Set REDIS_URL in the deployment environment}"
+      DASHSCOPE_API_KEY: "${DASHSCOPE_API_KEY:?Set DASHSCOPE_API_KEY in the deployment environment}"
+      CRON_SECRET: "${CRON_SECRET:?Set CRON_SECRET in the deployment environment}"
+      SMTP_HOST: "${SMTP_HOST:?Set SMTP_HOST in the deployment environment}"
+      SMTP_PORT: "${SMTP_PORT:-465}"
+      SMTP_USER: "${SMTP_USER:?Set SMTP_USER in the deployment environment}"
+      SMTP_PASS: "${SMTP_PASS:?Set SMTP_PASS in the deployment environment}"
+      SMTP_FROM: "${SMTP_FROM:?Set SMTP_FROM in the deployment environment}"
+      MEMORY_PUSH_ENABLED: "${MEMORY_PUSH_ENABLED:-false}"
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
