@@ -4,6 +4,13 @@ Thoughtmark is a self-initiated portfolio project for turning saved web pages in
 
 This repository contains synthetic examples only and is not presented as paid client work. Production credentials, infrastructure addresses, private development notes, and user data are intentionally excluded.
 
+## Why this exists
+
+Bookmarks are easy to collect and hard to revisit. Thoughtmark explores a more
+useful capture loop: save the page with context, process it in the background,
+connect it to related material, and make it searchable from both the web app and
+the browser extension.
+
 ## Highlights
 
 - Bookmark capture from a Manifest V3 browser extension
@@ -32,6 +39,25 @@ thoughtmark/
 ├── thoughtmark-extension/  # Browser extension
 └── .github/workflows/      # Continuous integration
 ```
+
+## Architecture
+
+```text
+Manifest V3 extension
+        |
+        v
+Next.js UI and API routes ---> PostgreSQL + pgvector
+        |                              |
+        v                              v
+Redis + BullMQ workers <------ search and graph views
+        |
+        v
+Environment-configured AI and email providers
+```
+
+External providers are configuration boundaries rather than bundled services.
+The public repository does not include production tokens, private deployment
+addresses, or a hosted multi-user environment.
 
 ## Run the web application
 
@@ -79,6 +105,14 @@ The Playwright suites under `thoughtmark-web/tests/` require the local applicati
 - Never commit real `.env` files, API keys, passwords, email authorization codes, or deployment addresses.
 - The production Compose example resolves all sensitive values from environment variables.
 - Use synthetic accounts and `example.com` addresses in scripts and screenshots.
+
+## Need implementation help?
+
+I offer scoped AI/API automation audits, working proofs of concept, integration
+implementation, and reliability hardening. Do not include credentials or
+sensitive customer data in a public issue.
+
+[Request a scoped project review](https://github.com/gzh246/gzh246/issues/new?template=project-inquiry.yml)
 
 ## Project status and license
 
