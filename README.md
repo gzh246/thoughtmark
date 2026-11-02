@@ -4,6 +4,28 @@ Thoughtmark is a self-initiated portfolio project for turning saved web pages in
 
 This repository contains synthetic examples only and is not presented as paid client work. Production credentials, infrastructure addresses, private development notes, and user data are intentionally excluded.
 
+## 项目概览与界面
+
+面向个人学习的书签知识工作台：从浏览器记录网页与收藏原因，在时间轴中回看，通过搜索命中段落、主题与图谱连接相关内容。包含 Next.js 网页应用、WXT 浏览器扩展、PostgreSQL / Prisma 与 Redis / BullMQ 处理代码。
+
+[中文项目说明、技术结构与当前阶段](docs/PROJECT.md)。以下图片来自原网页组件和原扩展构建，使用独立本地固定数据与接口夹具；本次未连接数据库、队列或真实模型，具体操作及验证范围见项目说明。
+
+### 收藏与回看
+
+![知识时间轴](docs/screenshots/01-timeline.png)
+
+![收藏详情与个人注解](docs/screenshots/02-bookmark-detail.png)
+
+### 搜索与知识结构
+
+![搜索结果与命中段落](docs/screenshots/03-search.png)
+
+![知识图谱与兴趣演化](docs/screenshots/04-knowledge-graph.png)
+
+### 浏览器收藏入口
+
+<img src="docs/screenshots/05-extension-capture.png" width="360" alt="浏览器扩展中的收藏原因与标签" />
+
 ## Why this exists
 
 Bookmarks are easy to collect and hard to revisit. Thoughtmark explores a more

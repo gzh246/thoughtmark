@@ -1,0 +1,76 @@
+{
+  "launchedPid": 53988,
+  "captures": [
+    {
+      "file": "01-timeline.png",
+      "url": "http://127.0.0.1:3451/timeline",
+      "title": "Thoughtmark — 知识时间轴",
+      "horizontalOverflow": false
+    },
+    {
+      "file": "02-bookmark-detail.png",
+      "url": "http://127.0.0.1:3451/timeline",
+      "title": "Thoughtmark — 知识时间轴",
+      "horizontalOverflow": false
+    },
+    {
+      "file": "03-search.png",
+      "url": "http://127.0.0.1:3451/search",
+      "title": "Thoughtmark — 语义搜索",
+      "horizontalOverflow": false
+    },
+    {
+      "file": "04-knowledge-graph.png",
+      "url": "http://127.0.0.1:3451/graph",
+      "title": "Thoughtmark — 知识图谱",
+      "horizontalOverflow": false
+    },
+    {
+      "file": "05-extension-capture.png",
+      "url": "http://127.0.0.1:3452/popup.html",
+      "title": "Thoughtmark",
+      "source": "WXT production popup, browser API fixtures"
+    }
+  ],
+  "errors": [],
+  "requests": [
+    {
+      "path": "/api/notifications",
+      "fixture": true
+    },
+    {
+      "path": "/api/bookmarks",
+      "fixture": true
+    },
+    {
+      "path": "/api/notifications",
+      "fixture": true
+    },
+    {
+      "path": "/api/search",
+      "fixture": true
+    },
+    {
+      "path": "/api/search",
+      "fixture": true
+    },
+    {
+      "path": "/api/notifications",
+      "fixture": true
+    },
+    {
+      "path": "/api/graph",
+      "fixture": true
+    },
+    {
+      "path": "/api/insights",
+      "fixture": true
+    },
+    {
+      "path": "/api/insights/interest-evolution",
+      "fixture": true
+    }
+  ],
+  "externalModelRequests": 0,
+  "backendRequests": 0
+}
